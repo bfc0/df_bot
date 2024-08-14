@@ -1,5 +1,6 @@
 from environs import Env
 import logging
+from logging.handlers import SysLogHandler
 import json
 from dialogflow import df_response
 from tg_logger import TelegramLogsHandler
@@ -10,13 +11,17 @@ logger = logging.getLogger("vk bot")
 
 
 async def reply_to_user(project_id, message):
-    user_id = message.from_id
-    response, is_default = df_response(project_id, user_id, message.text, "ru")
+    user_id = None
+    try:
+        user_id = message.from_id
+        response, is_default = df_response(project_id, user_id, message.text, "ru")
 
-    if is_default:
-        return
+        if is_default:
+            return
 
-    await message.answer(response)
+        await message.answer(response)
+    except Exception as e:
+        logger.error(f"exception triggered while replying to {user_id}: {e}")
 
 
 def main():
@@ -24,6 +29,7 @@ def main():
     for l in loggers:
         l.setLevel(logging.ERROR)
     logger.setLevel(logging.INFO)
+    logger.addHandler(SysLogHandler(address="/dev/log"))
 
     env = Env()
     env.read_env()

@@ -53,12 +53,10 @@ def main():
     with open(args.input_file, "r") as file:
         intents = json.load(file)
 
-    # print(credentials)
     for intent, intent_value in intents.items():
         try:
             questions = intent_value["questions"]
             answer = intent_value["answer"]
-            print(f"{questions=}, {answer=}")
             create_intent(credentials["project_id"], intent, questions, [answer])
         except InvalidArgument:
             logger.warning(f"intent {intent} already exists")
