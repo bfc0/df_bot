@@ -16,15 +16,16 @@ logger = logging.getLogger("tg bot")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
+    await update.message.reply_text(  # type:ignore
         "Привет! Вы можете задать мне вопрос, и я постараюсь ответить."
     )
 
 
 async def reply_to_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    query = chat_id = None
     try:
-        query = update.message.text
-        chat_id = update.effective_chat.id
+        query = update.message.text  # type: ignore
+        chat_id = update.effective_chat.id  # type: ignore
 
         answer, _ = df_response(
             context.bot_data["project_id"],
@@ -35,9 +36,8 @@ async def reply_to_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     except Exception:
         logger.error(f"exception while replying: to {query} in {chat_id}")
         answer = "Произошла ошибка, попробуйте повторить вопрос"
-    logger.error(f"message {answer}")
 
-    await update.message.reply_text(answer)
+    await update.message.reply_text(answer)  # type:ignore
 
 
 def main():

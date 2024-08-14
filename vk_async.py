@@ -42,11 +42,11 @@ def main():
         logger.error("credentials.json must contain a valid project_id")
         return
 
-    if (tg_log_chat_id := env.str("TG_LOGS_CHAT_ID", None)) and (
-        (tg_token := env.str("TG_TOKEN", None))
-    ):
-        print("init logger")
-        tg_handler = TelegramLogsHandler(tg_token, tg_log_chat_id)
+    tg_logs_chat_id = env.str("TG_LOGS_CHAT_ID")
+    tg_token = env.str("TG_TOKEN")
+    if tg_logs_chat_id and tg_token:
+        logging.info("init logger")
+        tg_handler = TelegramLogsHandler(tg_token, tg_logs_chat_id)
         logger.addHandler(tg_handler)
 
     bot = Bot(vk_token)
